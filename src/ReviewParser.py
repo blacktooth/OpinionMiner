@@ -1,7 +1,7 @@
 #!/usr/bin/python2.7
 
 """
-Parse reviews from all supported formats (JSON, CSV, XML...)
+	Parse reviews from all supported formats (JSON, CSV, XML...)
 	
 """
 
@@ -9,7 +9,7 @@ import sys, csv, json
 
 
 """
-Check for proper python version and running environment
+	Check for proper python version and running environment
 """
 
 
@@ -19,7 +19,7 @@ Check for proper python version and running environment
 class ReviewParser:
 
 	def __init__(self, handle, format_, delimiter = ','):
-		self.reviews = []
+		self.reviews = {}
 		self.format_ = format_
 		self.handle = handle 
 		self.CSV_DELIM = delimiter
@@ -32,14 +32,12 @@ class ReviewParser:
 			raise AttributeError
 		
 		if self.format_ == 'CSV':
-			reviews = csv.reader(self.handle, delimiter = self.CSV_DELIM, quotechar = '|')
-			for review in reviews:
-				self.reviews.append((review[0], review[1], review[2]))
+			reviews = csv.reader(self.handle, delimiter = self.CSV_DELIM, quotechar = '"')
+			self.reviews = [{'user': review[0], 'rating': review[1], 'raw-text': review[2]} for review in reviews]
 
 		elif self.format_ == 'JSON':
 			reviews = json.load(self.handle)
-			for review in reviews:
-				self.reviews.append((review['comment-by'], review['comment-rating'], review['comment-text']))
+			self.reviews = [{'user': review['comment-by'], 'rating': review['comment-rating'], 'raw-text': review['comment-text']}]
 
 		elif self.format_ == 'XML':
 			#parse XML
