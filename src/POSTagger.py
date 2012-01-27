@@ -11,19 +11,20 @@ import nltk
 #
 # 
 class POSTagger:
-	def __init__(self, tokens):
-		if type(tokens) is not type([]):
-			t = WordTokenizer()
-			self.tokens = t.tokenize(tokens)
-		else:
-			self.tokens = tokens
+	def __init__(self, tokens_list):
+		self.tokens = []
+		for tokens in tokens_list:
+			for token in tokens:
+				self.tokens.append(token)
 			
 	def nltk_tag(self):
 		return nltk.pos_tag(self.tokens)
 	
 	def train(self, testcases):
 		#Todo 
+		None
 	
 	def default_tag(self, wordtag_dict):
 		#todo
+		None
 
