@@ -41,6 +41,7 @@ class ReviewParser:
 
 		elif self.format_ == 'XML':
 			#parse XML
+			None
 		else:
 			raise AttributeError
 
