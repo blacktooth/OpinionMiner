@@ -8,11 +8,11 @@
 
 import nltk, re
 
-## The WordTokenizer class 
+## The Tokenizer class 
 #
 # 
 
-class WordTokenizer:
+class Tokenizer:
 	__PATTERNS__ = '''([A-Z]\\.)+|([A-Za-z]+n[']t)|\\$?\\d+(\\.\\d+)?%?|\\w+(-\\w+)*|\\.\\.\\.|[][.,;"\?!():-_`]'''
 	def __init__(self, patterns = None):
 		if patterns:
