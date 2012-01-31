@@ -15,11 +15,11 @@ import sys, csv, json
 
 ## The review parser class
 #
-# Parse reviews from all supported formats (JSON, CSV, XML) to tuples
+# Parse reviews from all supported formats (JSON, CSV, XML) to a list of dicts
 class ReviewParser:
 
 	def __init__(self, handle, format_, delimiter = ','):
-		self.reviews = {}
+		self.reviews = []
 		self.format_ = format_
 		self.handle = handle 
 		self.CSV_DELIM = delimiter
@@ -46,3 +46,7 @@ class ReviewParser:
 			raise AttributeError
 
 		return self.reviews
+
+	def get_raw_text(self):
+		if self.reviews:
+			return "".join([review['raw-text'] for review in self.reviews])
