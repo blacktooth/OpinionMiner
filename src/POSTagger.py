@@ -5,7 +5,7 @@
 	Uses NLTK
 """
 
-import nltk
+import nltk, re
 
 ## The POSTagger class 
 #
@@ -20,6 +20,12 @@ class POSTagger:
 	def nltk_tag(self):
 		return nltk.pos_tag(self.tokens)
 	
+	def stemmer(self, tokens, type_ = 'plurals'):
+		if type_ == 'plurals':
+			#@see nltk.WordNetLemmatizer
+			wnl = nltk.WordNetLemmatizer()
+			return [wnl.lemmatize(token) for token in tokens]
+
 	def train(self, testcases):
 		#Todo 
 		None
