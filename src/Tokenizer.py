@@ -31,4 +31,4 @@ class Tokenizer:
 		return [self.word_tokenize(sent) for sent in self.sent_tokenize(text)]
 
 	def nltk_tokenize(self, text):
-		return [nltk.word_tokenize(sent) for sent in nltk.sent_tokenize(text)]
+		return nltk.word_tokenize(text)
