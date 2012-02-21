@@ -35,9 +35,8 @@ for i in range(0, 10):
 	if review_span is not None:
 		review_text = review_span.text
 		review_by = review_span.parent.findPreviousSibling("div", {"class": "review-rating"}).text
-		regex = re.compile('By (.+) ', re.DOTALL)
-		review_by = regex.search(review_by).group(1).split()[0]
-		regex = re.compile('(\d)')
-		review_rating = soup.find('div', {'class': 'review-rating'}).findChild().attrMap['title']
-		review_rating = int(regex.search(review_rating).group(1))
+#		regex = re.compile('By (.+) ', re.DOTALL)
+#		review_by = regex.search(review_by).group(1).split()[0]
+		review_by = review_by.split()[2]
+		review_rating = soup.find('div', {'class': 'review-rating'}).findChild().attrMap['title'].split()[0]
 		reviews.append({'user': review_by, 'rating': review_rating, 'raw-text': review_text})
