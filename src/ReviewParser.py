@@ -31,15 +31,15 @@ class ReviewParser:
 		if self.handle is None or self.format_ is None:
 			raise AttributeError
 		
-		if self.format_ == 'CSV':
+		if self.format_ == 'csv':
 			reviews = csv.reader(self.handle, delimiter = self.CSV_DELIM, quotechar = '"')
 			self.reviews = [{'user': review[0], 'rating': review[1], 'raw-text': review[2]} for review in reviews]
 
-		elif self.format_ == 'JSON':
+		elif self.format_ == 'json':
 			reviews = json.load(self.handle)
-			self.reviews = [{'user': review['comment-by'], 'rating': review['comment-rating'], 'raw-text': review['comment-text']}]
+			self.reviews = [{'user': review['user'], 'rating': review['rating'], 'raw-text': review['raw-text']} for review in reviews]
 
-		elif self.format_ == 'XML':
+		elif self.format_ == 'xml':
 			#parse XML
 			None
 		else:
