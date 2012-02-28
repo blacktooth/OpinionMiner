@@ -7,6 +7,7 @@
 """
 
 import nltk, re
+from nltk import WhitespaceTokenizer
 
 ## The Tokenizer class 
 #
@@ -26,6 +27,10 @@ class Tokenizer:
 	
 	def word_tokenize(self, text):
 		return nltk.regexp_tokenize(text, self.__PATTERNS__, flags = re.IGNORECASE)
+
+	def whitespace_tokenize(self, text):
+		wst = WhitespaceTokenizer()
+		return wst.tokenize(text)
 	
 	def tokenize(self, text):
 		return [self.word_tokenize(sent) for sent in self.sent_tokenize(text)]
