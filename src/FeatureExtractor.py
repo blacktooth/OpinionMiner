@@ -18,7 +18,7 @@ class FeatureExtractor:
 		sents = t.sent_tokenize(text)
 		p = POSTagger()
 		for sent in sents:
-			tagged_sent = p.nltk_tag(t.nltk_tokenize(sent))
+			tagged_sent = p.nltk_tag(t.whitespace_tokenize(sent))
 			feature_sent = {}
 			feature_sent['sentence'] = sent
 			feature_sent['nouns'] = []
