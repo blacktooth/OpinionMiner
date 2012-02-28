@@ -6,7 +6,7 @@ Supported websites
 	Google product search
 """
 
-import urllib2, sys, re
+import urllib2, sys, re, json, string
 from BeautifulSoup import BeautifulSoup
 
 urls = {
@@ -15,28 +15,59 @@ urls = {
 
 reviews = []
 
-if len(sys.argv) < 2:
-	print "Usage: ", sys.argv[0], " <catalog id> [start_at = 0]"
-	exit()
+def validate_filename(filename):
+	#Validating filename
+	valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
+	filename = ''.join(ch for ch in filename if ch in valid_chars)
+	return filename.replace(' ', '_')
 
-cid = sys.argv[1]
-try:
-	start = int(sys.argv[2])
-except:
+def extract_entities(soup, n):
+	for i in xrange(0, n):
+		review_span = soup.find("span", {'id' : "uc-" + str(i)})
+		if review_span is not None:
+			review_text = review_span.text
+			review_by = review_span.parent.findPreviousSibling("div", {"class": "review-rating"}).text
+	#		regex = re.compile('By (.+) ', re.DOTALL)
+	#		review_by = regex.search(review_by).group(1).split()[0]
+			review_by = review_by.split()[2]
+			review_rating = soup.find('div', {'class': 'review-rating'}).findChild().attrMap['title'].split()[0]
+			reviews.append({'user': review_by, 'rating': review_rating, 'raw-text': review_text})
+
+def write_reviews(reviews, product_name):
+	json_file = open("../data/reviews/%s.json" % (validate_filename(product_name)), "w")
+	json_file.write(json.dumps(reviews))
+	json_file.close()
+	json.dumps(reviews)
+
+
+def run():
+	if len(sys.argv) < 2:
+		print "Usage: %s <catalog id> [number = 10]" % (sys.argv[0])
+		exit()
+
+	cid = sys.argv[1]
 	start = 0
+	try:
+		num = int(sys.argv[2])
+		if num < 10:
+			raise ValueError
+	except:
+		num = 10
 
-urls['gps'] = urls['gps'].replace('$cid', cid)
-urls['gps'] = urls['gps'].replace('$start', str(start))
+	while start < num:
+		url = urls['gps'].replace('$cid', cid).replace('$start', str(start))
+		soup = BeautifulSoup(urllib2.urlopen(url).read(), convertEntities = BeautifulSoup.HTML_ENTITIES)
 
-soup = BeautifulSoup(urllib2.urlopen(urls['gps']).read())
-
-for i in range(0, 10):
-	review_span = soup.find("span", {'id' : "uc-" + str(i)})
-	if review_span is not None:
-		review_text = review_span.text
-		review_by = review_span.parent.findPreviousSibling("div", {"class": "review-rating"}).text
-#		regex = re.compile('By (.+) ', re.DOTALL)
-#		review_by = regex.search(review_by).group(1).split()[0]
-		review_by = review_by.split()[2]
-		review_rating = soup.find('div', {'class': 'review-rating'}).findChild().attrMap['title'].split()[0]
-		reviews.append({'user': review_by, 'rating': review_rating, 'raw-text': review_text})
+		if start == 0:
+			avail_num = soup.findAll('span', {'class': 'product-num-reviews'})[1].text
+			print avail_num, "found"
+			avail_num = int(avail_num.split()[0].replace(',', ''))
+			if num > avail_num:
+				num = avail_num
+		extract_entities(soup, 10 if num - start > 10 else num - start)
+		start += 10
+	product_name = soup.find('span', {'class': 'main-title'}).text
+	write_reviews(reviews, product_name)
+		
+if __name__ == "__main__":
+	run()
