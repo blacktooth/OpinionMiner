@@ -9,16 +9,28 @@ from Tokenizer import Tokenizer
 from POSTagger import POSTagger
 from nltk import FreqDist
 from nltk import WordNetLemmatizer
+from nltk.corpus import stopwords
 
 class FeatureExtractor:
-	def __init__(self, text):
+	def _remove_stopwords(self, tokens):
+		words = stopwords.words('english')
+		#Find a way to eliminate the need for adding custom stopwords
+		words.extend(['pros', 'cons', 'things', 'day'])
+		
+		#Eliminate words that represent the name of the product
+		words.extend(self.product_name)
+		
+		return [token.lower() for token in tokens if token.lower() not in words and len(token) > 1]
+
+	def __init__(self, text, product_name):
 		self.candidate_features = []
 		self.feature_sentences = []
+		self.product_name = product_name.lower().split('_')
 		t = Tokenizer()
 		sents = t.sent_tokenize(text)
 		p = POSTagger()
 		for sent in sents:
-			tagged_sent = p.nltk_tag(t.whitespace_tokenize(sent))
+			tagged_sent = p.nltk_tag(self._remove_stopwords(t.nltk_tokenize(sent)))
 			feature_sent = {}
 			feature_sent['sentence'] = sent
 			feature_sent['nouns'] = []
@@ -39,7 +51,21 @@ class FeatureExtractor:
 			self.candidate_features.extend(fs['noun_phrases'])
 		return self.candidate_features
 
-	
+	def prune_features(self, features, p_support):
+		
+		#The most frequent feature is the type of product (from many observations)
+		self.product_category = features.pop(0)[0]
+
+		print features
+		#Map 1 word features to their supersets (Eg. battery to battery life)
+		#Currently works for 1 word to 2 word phrase mapping.
+		#Disagreed with p_support issue from paper
+		for i in xrange(0, len(features)):
+			for j in xrange(0, len(features)):
+				if features[i][0] in features[j][0].split():
+					features[i] = features[j]
+		return list(set(features))
+		
 	"""
 		This method differs from paper
 	"""
