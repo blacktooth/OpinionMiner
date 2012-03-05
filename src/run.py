@@ -26,23 +26,11 @@ rev.parse()
 
 text = rev.get_raw_text()
 
-f = FeatureExtractor(text)
+f = FeatureExtractor(text, review_files[choice])
 
 print "Based on ", len(rev.reviews), " reviews"
 
-print f.get_frequent_features(min_support)
+features = f.get_frequent_features(min_support)
 
-"""
-#tokenize_patterns = ['[Nn]ikon ?[dD][0-9]+', '([0-9]+ ?mm)', '(auto[ -_]?focus)', '(Apple)[ ]?(iphone)??[0-5]?[gs]*']
-features = [w.lower() for (w,t) in tags if t.startswith('N') and t != 'NNP']
-
-features = p.stemmer(features)
-
-dist = nltk.FreqDist(features)
-
-obs = [ob for ob in dist.iteritems()]
-
-logfile = open('/tmp/log.txt', 'w')
-logfile.write("".join(str(obs)).replace("), (", ")\n("))
-logfile.close()
-"""
+features = f.prune_features(features, 3)
+print "Is this a %s?" % f.product_category
