@@ -14,7 +14,7 @@ from nltk import WhitespaceTokenizer
 # 
 
 class Tokenizer:
-	__PATTERNS__ = '''([A-Z]\\.)+|([A-Za-z]+n[']t)|\\$?\\d+(\\.\\d+)?%?|\\w+(-\\w+)*|\\.\\.\\.|[][.,;"\?!():-_`]'''
+	__PATTERNS__ = '''([A-Za-z]+n[']t)|\\$?\\d+(\\.\\d+)?%?|\\w+(-\\w+)*|\\.\\.\\.|[][.,;"\?!():-_`]'''
 	def __init__(self, patterns = None):
 		if patterns:
 			p = ''
