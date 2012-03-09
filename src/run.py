@@ -24,13 +24,14 @@ rev = ReviewParser(open(reviews_path + review_files[choice], 'rb',), review_file
 
 rev.parse()
 
+print "Mining", len(rev.reviews), "reviews"
+
 text = rev.get_raw_text()
 
 f = FeatureExtractor(text, review_files[choice])
 
-print "Based on ", len(rev.reviews), " reviews"
-
 features = f.get_frequent_features(min_support)
 
-features = f.prune_features(features, 3)
+print "%d features are interesting" % len(features)
 print "Is this a %s?" % f.product_category
+print features
