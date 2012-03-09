@@ -9,23 +9,19 @@ from Tokenizer import Tokenizer
 from POSTagger import POSTagger
 from nltk import FreqDist
 from nltk import WordNetLemmatizer
-from nltk.corpus import stopwords
+from nltk.corpus import stopwords, wordnet
 
 class FeatureExtractor:
 	def _remove_stopwords(self, tokens):
 		words = stopwords.words('english')
 		#Find a way to eliminate the need for adding custom stopwords
-		words.extend(['pros', 'cons', 'things', 'day'])
-		
-		#Eliminate words that represent the name of the product
-		words.extend(self.product_name)
-		
+		words.extend(['pros', 'cons', 'things', 'day', 'points', 'time', 'month', 'year'])
 		return [token.lower() for token in tokens if token.lower() not in words and len(token) > 1]
 
 	def __init__(self, text, product_name):
 		self.candidate_features = []
 		self.feature_sentences = []
-		self.product_name = product_name.lower().split('_')
+		self.product_name = product_name.lower().split('-')[0].split('_')
 		t = Tokenizer()
 		sents = t.sent_tokenize(text)
 		p = POSTagger()
@@ -37,8 +33,12 @@ class FeatureExtractor:
 			feature_sent['noun_phrases'] = []
 			for i in range(0, len(tagged_sent)):
 				(word, tag) = tagged_sent[i]
+				#Don't include proper nouns
 				if tag.startswith('N') and tag != 'NNP':
-					if i > 0 and len(feature_sent['nouns']) > 0 and tagged_sent[i - 1][0] == feature_sent['nouns'][-1]:
+					"""
+					Consecutive nouns might form a feature phrase. Eg. Picture quality is a phrase.
+					Meaningless phrases like 'quality digital' are removed later as their frequeny of occurence is	low. """
+					if i > 0 and len(feature_sent['nouns']) > 0 and tagged_sent[i - 1][0] == feature_sent['nouns'][-1] and feature_sent['sentence'].find(feature_sent['nouns'][-1] + ' ' + word) > -1:
 						feature_sent['noun_phrases'].append(feature_sent['nouns'].pop() + ' ' + word)
 					else:
 						feature_sent['nouns'].append(word)
@@ -56,7 +56,6 @@ class FeatureExtractor:
 		#The most frequent feature is the type of product (from many observations)
 		self.product_category = features.pop(0)[0]
 
-		print features
 		#Map 1 word features to their supersets (Eg. battery to battery life)
 		#Currently works for 1 word to 2 word phrase mapping.
 		#Disagreed with p_support issue from paper
@@ -64,7 +63,12 @@ class FeatureExtractor:
 			for j in xrange(0, len(features)):
 				if features[i][0] in features[j][0].split():
 					features[i] = features[j]
-		return list(set(features))
+		for feature in features:
+			#Eliminate words that represent the name of the product
+			if feature[0] in self.product_name or len(feature[0]) < 3:
+				features.remove(feature)
+
+		return sorted(list(set(features)), key=lambda x: x[1], reverse=True)
 		
 	"""
 		This method differs from paper
@@ -74,4 +78,5 @@ class FeatureExtractor:
 		wnl = WordNetLemmatizer()
 		features = [wnl.lemmatize(token) for token in self.candidate_feature_list()]
 		dist = FreqDist(features)
-		return [(item, count) for (item, count) in dist.iteritems() if count >= min_support]
+		features = [(item, count) for (item, count) in dist.iteritems() if count >= min_support]
+		return self.prune_features(features, 3)
