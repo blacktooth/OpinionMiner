@@ -7,7 +7,7 @@ import sys
 try: 
 	min_support = int(sys.argv[1])
 except:
-	min_support = 5
+	min_support = 16
 
 reviews_path = '../data/reviews/'
 review_files = check_output(['ls', '-1', reviews_path]).split()
