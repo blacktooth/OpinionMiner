@@ -1,0 +1,207 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>
+Opinion Miner
+</title>
+<style type="text/css">
+.box1
+{
+	width:80px;
+	height:80px;
+	margin:5px;
+	float:left;
+	overflow:hidden;
+	border-style:solid;
+}
+.pro
+{
+	padding-top:10px;
+	padding-left:5px;
+	padding-bottom:5px;
+	color:grey;
+	background:#f3f3f3;
+	font-size:24px;
+}
+.pro1
+{
+	color:black;
+	padding-top:5px;
+	padding-left:5px;
+	padding-bottom:5px;
+	color:grey;
+	background:#f3f3f3;
+	font-size:14px;
+}
+hr
+{
+	padding:0px 0px 0px 0px;
+	margin:0px 0px 0px 0px;
+}
+
+</style>
+
+<script type="text/javascript" src="jquery.js"></script>
+<!--http://ajax.microsoft.com/ajax/jquery/jquery-1.4.2.min.js-->
+<script type="text/javascript">
+var i=0;
+var str=0;
+var name;
+var rating;
+//Fetch Given Cid Output
+
+$(document).ready(function(){
+  $("#par").click(function(){
+  var cid=$("#cid").attr("value");
+  var min=$("#min").attr("value");
+  var nul=$("#nul").attr("value");
+  if(cid==nul||min==nul)
+  {
+	alert("cid or min must not be empty");
+	return;
+  }
+	
+	// $.ajax({url:"demo_ajax_load.txt",datatype:"json",success:function(result){
+		$("#poutput").slideToggle();
+		//name=result['pname'];
+		name="mobile Phone";
+		$("#pname").append("Product Name: "+ name +"<hr />");
+		//rating=result['prating'];
+		$("#prating").append("Product Rating: ");
+		var rating=3.5;
+		for(str=0;str<Math.floor(rating);str++)
+		{
+			$("#prating").append("<img src=\"starRating.gif\">");
+			i=i+1;
+		}
+		if(rating>Math.floor(rating))
+		{
+			$("#prating").append("<img src=\"fill.png\">");
+			i=i+1;
+		}
+		for(str=i;str<5;str++)
+		{
+			$("#prating").append("<img src=\"empty.png\">");
+		}
+		$("#prating").append("<hr />");
+		i=0;
+		/*while(result['features'][i])
+		{
+			$("#poutput").append("<div class=\"pro\">" + resultt['features'][i]['word'] + ": ");
+			$("#poutput").append("<div class=\"pro\" style=\"display:none\"> <img src=\"plus.gif\"> " + result['features'][i]['no_positive'] + " ");
+			$("#poutput").append(" <img src=\"minus.gif\"> " + result['features'][i]['no_negative'] + " ");
+			$("#poutput").append(" <img src=\"neutral.gif\"> " + result['features'][i]['neutral'] + "<br />");
+			$("#poutput").append(" " + result['features'][i]['best_sentence'] + "</div><hr /></div>");
+			i++;
+		}*/
+		i=0;
+	// }});
+  });
+});
+
+$(document).ready(function(){
+  $(".pro").mouseover(function(){
+	$(this).children(".pro1").slideToggle("normal");
+	$(this).css("color","black");
+  });
+});
+
+$(document).ready(function(){
+  $(".pro").mouseout(function(){
+	$(this).children(".pro1").slideToggle("normal");
+	$(this).css("color","grey");
+  });
+});
+
+//product on click
+$(document).ready(function(){
+  $(".box1").click(function(){
+	//$(this).="";
+	alert("this");
+  });
+});
+
+//Show Products Code
+$(document).ready(function(){
+  $("#showp").click(function(){
+	// $.ajax({url:"demo_ajax_load.txt",datatype:"json",success:function(result){
+		$("#prod").slideToggle();
+		/*while(result['products'][i])
+		{
+			$("#show").append("<div class=\"box1\">" + result['products'][i]['name'] + "<br />" + result['products'][i]['cid'] + "</div>");
+		}
+		i=0;*/
+		
+	// }});
+  });
+});
+
+</script>
+<!--
+<script type="text/javascript">
+function ajx()
+{
+
+var xmlhttp;
+if (window.XMLHttpRequest)
+  {// code for IE7+, Firefox, Chrome, Opera, Safari
+  xmlhttp=new XMLHttpRequest();
+  }
+else
+  {// code for IE6, IE5
+  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  }
+    
+	xmlhttp.onreadystatechange=function()
+	{
+		if (xmlhttp.readyState==4 && xmlhttp.status==200)
+		{
+			//document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
+		}
+	}
+	
+	xmlhttp.open("GET"," http://localhost:80/summarize?cid="+document.getElementById("cid")+"&min_support="+document.getElementById("min")+"",true);
+	xmlhttp.send();  
+	
+  }
+  #AD5CAD
+  </script>-->
+  </head>
+  <body style="background-color:#fff; background-repeat:no-repeat;width:auto; height:auto; margin-left:auto; margin-right:auto; color:black;">
+<table style="margin-top:auto; margin-bottom:auto; margin-left:auto; margin-right:auto; text-align:center">
+<tr><td colspan="3"><img src="img_monitoring_top_graphic (1).png" alt="banner" style="text-align:center;"/></td></tr>
+<tr><td colspan="3" id="show">
+<button id="showp">Show Products</button>
+<br /><br /> 
+<div id="prod" hidden="hidden" style="max-width:auto;max-height:100px;">
+	<div class="box1">products are not the best<br /> cid </div>
+	<div class="box1">products<br /> cid </div>
+	<div class="box1">products<br /> cid </div>
+	<div class="box1">products<br /> cid </div>
+	<div class="box1">products<br /> cid </div>
+	<div class="box1">products<br /> cid </div>
+</div><br /></td></tr> 
+<tr><td colspan="3">
+Or
+</td></tr>
+<tr><td>Enter Cid Value</td><td>:</td><td><input id="cid" type="text" /></td></tr>
+<tr><td>Enter Minimum Support Value</td><td>:</td><td><input id="min" type="text" /></td></tr>
+<tr><td><input id="nul" type="hidden" /></td></tr>
+<!--<tr><td>Enter No. of review</td><td>:</td><td><input id="rev" type="text" /></td></tr>-->
+<tr><td colspan="3" style="text-align:center;"><button id="par" type="button">Click</button></td></tr>
+</table>
+
+<br />
+<div id="poutput" hidden="hidden" style="dispaly:none; width:800px;margin-top:auto; margin-bottom:auto; margin-left:auto; margin-right:auto;">
+<div id="pname" class="pro" style="padding-top:20px"></div>
+
+<div id="prating" class="pro"></div>
+
+<div class="pro">Product<div class="pro1" hidden="hidden" > <img src="plus.gif"> 242 <img src="minus.gif"> 134 <img src="neutral.gif"> 123 <br /> </div><hr /></div>
+
+<div class="pro">Product Feature2:Product<div hidden="hidden" class="pro1" > <img src="plus.gif"> 242 <img src="minus.gif"> 134 <img src="neutral.gif"> 123 <br /> </div><hr /></div>
+
+<div class="pro">Product Feature3:Product<div hidden="hidden" class="pro1" > <img src="plus.gif"> 242 <img src="minus.gif"> 134 <img src="neutral.gif"> 123 <br /> </div></div>
+</div>
+</body>
+</html>

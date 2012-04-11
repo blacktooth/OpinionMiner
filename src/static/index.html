@@ -1,0 +1,220 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>
+Opinion Miner
+</title>
+<style type="text/css">
+.box1
+{
+	width:80px;
+	height:80px;
+	margin:5px;
+	float:left;
+	overflow:hidden;
+	border-style:solid;
+}
+.pro
+{
+	padding-top:10px;
+	padding-left:5px;
+	padding-bottom:5px;
+	color:grey;
+	background:#f3f3f3;
+	font-size:24px;
+}
+.pro1
+{
+	color:black;
+	padding-top:5px;
+	padding-left:5px;
+	padding-bottom:5px;
+	color:grey;
+	background:#f3f3f3;
+	font-size:14px;
+}
+hr
+{
+	padding:0px 0px 0px 0px;
+	margin:0px 0px 0px 0px;
+}
+
+</style>
+<script type="text/javascript" src="jquery.js"></script>
+<!--http://ajax.microsoft.com/ajax/jquery/jquery-1.4.2.min.js-->
+<script type="text/javascript">
+var i=0;
+var str=0;
+var name;
+var rating;
+var global_cid;
+var min = 5;
+//Fetch Given Cid Output
+
+$(document).ready(function(){
+  $("#par").click(function(){
+  cid=$("#cid").attr("value");
+  min=$("#min").attr("value");
+  if(cid==""||min=="")
+  {
+	alert("cid or min must not be empty");
+	return;
+  }
+  display(cid,min);
+  });
+});
+
+$(document).ready(function(){
+});
+
+$(document).ready(function(){
+  $("#cancel").click(function(){
+	$("#pcid").slideUp();
+  });
+});
+
+$(document).ready(function(){
+  $("#submit").click(function(){
+	min=$("#pmin").attr("value");
+	if(min=="")
+	{
+		alert("Minimum Support value Should not be empty");
+		return;
+	}
+	display(global_cid,min);
+  });
+});
+
+$(document).ready(function(){
+  $(".pro").mouseover(function(){
+	$(this).children(".pro1").slideToggle("normal");
+	$(this).css("color","black");
+  });
+});
+
+$(document).ready(function(){
+  $(".pro").mouseout(function(){
+	$(this).children(".pro1").slideToggle("normal");
+	$(this).css("color","grey");
+  });
+});
+
+//Show Products Code
+$(document).ready(function(){
+  $("#showpbutton").click(function(){
+	 $.get("http://localhost:8080/products", function(result){
+		$("#prod").slideToggle();
+		console.log(result);
+		products = result.products
+		for (product in products)
+		{
+			$("#show").append("<div id="+products[product]['cid']+" class=\"box1\">" + products[product]['name'] + "<br /></div>");
+			
+		}
+		$(".box1").click(function(){
+			$("#pcid").slideUp();
+			$("#pcid").slideDown();
+			global_cid=$(this).attr("id");
+		
+		});
+		
+	}, dataType = 'json');
+  });
+});
+
+function display(cid,min)
+{
+// $.ajax({url:"http://localhost/summarize?cid="+cid+"&min="+min+",datatype:\"json\",success:function(result){
+		alert(cid+" "+min);
+		$("#poutput").slideToggle();
+		//name=result['pname'];
+		name="mobile Phone";
+		$("#poutput").append("<div id=\"pname\" class=\"pro\">Product Name: "+ name +"<hr /></div>");
+		//rating=result['prating'];
+		$("#poutput").append("<div id=\"prating\" class=\"pro\">Product Rating: ");
+		rating=3.5;
+		for(str=0;str<Math.floor(rating);str++)
+		{
+			$("#prating").append("<img src=\"starRating.gif\">");
+			i=i+1;
+		}
+		if(rating>Math.floor(rating))
+		{
+			$("#prating").append("<img src=\"fill.png\">");
+			i=i+1;
+		}
+		for(str=i;str<5;str++)
+		{
+			$("#prating").append("<img src=\"empty.png\">");
+		}
+		$("#prating").append("<hr /></div>");
+		i=0;
+		/*while(result['features'][i])
+		{
+			$("#poutput").append("<div class=\"pro\">" + resultt['features'][i]['word'] + ": ");
+			$("#poutput").append("<div class=\"pro\" style=\"display:none\"> <img src=\"plus.gif\"> " + result['features'][i]['no_positive'] + " ");
+			$("#poutput").append(" <img src=\"minus.gif\"> " + result['features'][i]['no_negative'] + " ");
+			$("#poutput").append(" <img src=\"neutral.gif\"> " + result['features'][i]['neutral'] + "<br />");
+			$("#poutput").append(" " + result['features'][i]['best_sentence'] + "</div><hr /></div>");
+			i++;
+		}*/
+		i=0;
+	// }});
+}
+</script>
+</head>
+	<body style="width:1024px; height:auto; margin-left:auto; margin-right:auto;">
+  
+	<div id="top" style="width:1024px; text-align:center;" >
+		<img src="img_monitoring_top_graphic (1).png" alt="banner" style="text-align:center;" />
+	</div>
+  
+	<div id="showp" style="width:1024px; height:160px; text-align:center;">
+		<div id="showpbutton" style="float:left;background-color:green; width:160px; height:160px; vertical-align:middle;">
+			<br />
+			<br />
+			<br />
+			Show Products
+		</div>
+  
+		<div id="prod" style="float:left;width:850px;height:160px;">
+			<div id="show" style="float:left;width:850px; height:90px; overflow-y:scroll;overflow-x:hidden;">
+			</div>
+				
+			<div id="pcid" hidden="hidden" style=" height:66px; width:850px; float:left; text-align:center; vertical-align:middle; background-color:black; color:white; margin-top:4px;">
+				<br />
+				Enter min support Value:
+				<input id="pmin" type="text" />
+				<button id="cancel">Cancel</button>
+				<button id="submit">Submit</button>
+			</div>
+		</div>
+	</div>
+	
+	<div style="background-color:#f3f3f3;">
+		<div style="width:200px;float:left;padding:30px;background-color:#f3f3f3;">
+			<br />
+			Enter Cid Value:<br /> <input id="cid" type="text" /><br />
+			Enter Minimum Support Value:<br /> <input id="min" type="text" /><br />
+			<input id="nul" type="hidden" />
+			<button id="par" type="button">Click</button>
+		</div>
+		
+		<div id="poutput" hidden="hidden" style="display:none;width:700px; float:left; margin-top:auto; margin-bottom:auto; margin-left:auto; margin-right:auto;">
+	
+			<div id="pname" class="pro" style="padding-top:20px"></div>
+
+			<div id="prating" class="pro"></div>
+
+			<div class="pro">Product<div class="pro1" hidden="hidden" > <img src="plus.gif"> 242 <img src="minus.gif"> 134 <img src="neutral.gif"> 123 <br /> </div><hr /></div>
+
+			<div class="pro">Product Feature2:Product<div hidden="hidden" class="pro1" > <img src="plus.gif"> 242 <img src=	"minus.gif"> 134 <img src="neutral.gif"> 123 <br /> </div><hr /></div>
+
+			<div class="pro">Product Feature3:Product<div hidden="hidden" class="pro1" > <img src="plus.gif"> 242 <img src="minus.gif"> 134 <img src="neutral.gif"> 123 <br /> </div></div>
+		
+		</div>
+
+	</div>	
+  
+</body>
+</html>
