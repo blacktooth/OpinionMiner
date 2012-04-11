@@ -6,17 +6,25 @@
 """
 
 import sys, csv, json
-
-
-"""
-	Check for proper python version and running environment
-"""
-
+from subprocess import check_output
+import settings
 
 ## The review parser class
 #
 # Parse reviews from all supported formats (JSON, CSV, XML) to a list of dicts
 class ReviewParser:
+
+	@staticmethod
+	def get_available_reviews():
+		review_files = check_output(['ls', '-1', settings.reviews_path]).split()
+		return review_files
+
+	@staticmethod
+	def map_cid_to_name(cid):
+		review_files = check_output(['ls', '-1', settings.reviews_path]).split()
+		for rf in review_files:
+			if rf.split('.')[0].split('_')[-2] == cid:
+				return rf
 
 	def __init__(self, handle, format_, delimiter = ','):
 		self.reviews = []
