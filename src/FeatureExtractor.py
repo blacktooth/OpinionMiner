@@ -7,6 +7,7 @@
 
 from Tokenizer import Tokenizer
 from POSTagger import POSTagger
+from ReviewParser import ReviewParser
 from nltk import FreqDist
 from nltk import WordNetLemmatizer
 from nltk.corpus import stopwords, wordnet
@@ -21,7 +22,7 @@ class FeatureExtractor:
 	def __init__(self, text, product_name):
 		self.candidate_features = []
 		self.feature_sentences = []
-		self.product_name = product_name.lower().split('-')[0].split('_')
+		self.product_name = ReviewParser.get_pretty_name(product_name)
 		t = Tokenizer()
 		sents = t.sent_tokenize(text.lower())
 		p = POSTagger()
@@ -61,7 +62,7 @@ class FeatureExtractor:
 		#Find a way to eliminate the need for adding custom words 
 		words = ['pro', 'con', 'thing', 'day', 'point', 'time', 'month', 'year']
 		#Eliminate words that represent the name of the product
-		words.extend(self.product_name)
+		words.extend(self.product_name.split())
 
 		features = filter(lambda x: len(x[0]) > 2 and x[0] not in words, features)
 

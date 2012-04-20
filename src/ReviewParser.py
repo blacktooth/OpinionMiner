@@ -20,6 +20,10 @@ class ReviewParser:
 		return review_files
 
 	@staticmethod
+	def get_pretty_name(rf):
+		return rf.split('-')[0].replace('_', ' ').lower()
+
+	@staticmethod
 	def map_cid_to_name(cid):
 		review_files = check_output(['ls', '-1', settings.reviews_path]).split()
 		for rf in review_files:
