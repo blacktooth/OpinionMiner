@@ -1,5 +1,6 @@
 import json, web
 from OpinionMiner import *
+from ReviewParser import ReviewParser
 import settings
 
 app = web.application(settings.urls, globals())
@@ -53,7 +54,7 @@ class Products:
 		prd_json['products'] = []
 		for rf in review_files:
 			entity = {}
-			entity['name'] = rf
+			entity['name'] = ReviewParser.get_pretty_name(rf).title()
 			entity['cid'] = rf.split(".")[0].split("_")[-2]
 			entity['number'] = rf.split(".")[0].split("_")[-1]
 			prd_json['products'].append(entity)
@@ -62,7 +63,11 @@ class Products:
 		
 class OpinionSummarizer:
 	def GET(self):
-		return None
+		data = web.input()
+		om = OpinionMiner(data['cid'], int(data['min']))
+		response = om.run()
 
+		return json.dumps(response)
+		
 if __name__ == "__main__":
 	app.run()
