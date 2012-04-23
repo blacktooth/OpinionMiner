@@ -4,17 +4,22 @@
 	Performs Parts of Speech tagging on the review text	
 	Uses NLTK
 """
-
 import nltk
 
-## The POSTagger class 
-#
-# 
 class POSTagger:
 	def nltk_tag(self, tokens):
+		"""
+			Uses the NLTK POS tagger to tag the tokens.
+			tokens: List of tokens to be tagged.
+		"""
 		return nltk.pos_tag(tokens)
 	
 	def stemmer(self, tokens, type_ = 'plurals'):
+		"""
+			Uses NLTK WordNetLemmatizer to lemmatize and stem the tokens
+			tokens: List of tokens to be lemmatize
+			type_: type of operation (default: converts plurals to singulars)
+		"""
 		if type_ == 'plurals':
 			#@see nltk.WordNetLemmatizer
 			wnl = nltk.WordNetLemmatizer()

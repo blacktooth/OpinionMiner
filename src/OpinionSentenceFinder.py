@@ -4,11 +4,16 @@
 	Find all useful opinion sentences containing frequent features
 	Uses NLTK
 """
-
 from nltk.corpus import WordListCorpusReader
 
 class OpinionSentenceFinder:
 	def __init__(self, features, feature_sentences):
+		"""
+			Filter all the sentences containing frequent features
+			features: List of frequent features
+			feature_sentences: List of all sentences containing features
+
+		"""
 		self.feature_sentences = feature_sentences
 		self.opinion_sentences = []
 		self.features = features
@@ -27,6 +32,9 @@ class OpinionSentenceFinder:
 							self.opinion_sentences.append((feature, JJ))
 		
 	def __init_corpora(self):
+		"""
+			Initializes the Opinion-Miner corpora.
+		"""
 		self.negation_words = WordListCorpusReader('../data/corpora/', 'negation_words')
 		self.sent_ends = WordListCorpusReader('../data/corpora', 'sent_ends')
 		self.negative_sentiments = WordListCorpusReader('../data/corpora/sentiment-lexicon', 'negative-words.txt')
@@ -43,9 +51,43 @@ class OpinionSentenceFinder:
 		      Negation of opinions. (done.)
 		      (Opt.) Append (RR, RB) to the JJ
 		      Special treatment for NOUNS in pros
-			Fix neg bug
 	"""
 	def get_nearest_JJ(self, tags, n_index):
+		"""
+			Finds the most probable adjective describing the the given feature in a sentence.
+			tags: List of POS tags of given sentence.
+			n_index: List index of the feature word.
+			
+			Algorithm:
+				Start from the feature token (n_index) and move to the right till one of the following is found:
+					i) A sentence end marker (and, ',', '.', or etc.)
+					ii) An adjective tag ('JJ', 'JJS', 'JJR')
+					if a negation word in found:
+						set neg flag to w, where w is the negation word
+					If the obtained adjective is in positive words corpus:
+						set sentiment_right = positive
+					else If the obtained adjective is in negative words corpus:
+						set sentiment_right = negative
+					else	
+						set sentiment_right = None
+					index_right = index of adjective_token
+				
+				Repeat the above process proceeding to the left of feature token
+					index_left = index of adjective_token
+					Find the sentiment_left using the above process
+				
+				if n_index - index_left < n_index - index_right:
+					sentiment = sentiment_left
+				else:
+					sentiment = sentiment_right
+				
+				if neg is set:
+					sentiment = !sentiment
+				
+				return adjective, sentiment
+				
+			
+		"""
 		adj = ''
 		neg = ''
 		sentiment = None

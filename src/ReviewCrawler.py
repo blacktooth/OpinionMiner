@@ -1,14 +1,12 @@
 #!/usr/bin/python
+
 """
-Author: Ravindra Nath kakarla
 Crawls reviews from various websites.
 Supported websites
 	Google product search
 """
-
 import urllib2, sys, re, json, string
 from BeautifulSoup import BeautifulSoup
-
 
 class ReviewCrawler:
 	def __init__(self, cid, no_reviews = 10):
@@ -20,12 +18,21 @@ class ReviewCrawler:
 		}
 
 	def validate_filename(self, filename):
+		"""
+			Filters invalid chars from filenames.
+			filename: filename to validate.
+		"""
 		#Validating filename
 		valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
 		filename = ''.join(ch for ch in filename if ch in valid_chars)
 		return filename.replace(' ', '_')
 
 	def extract_entities(self, soup, n):
+		"""
+			Extracts review text and other meta data from the review pages.
+			soup: The BeautifulSoup object
+			n: Number of reviews to parse
+		"""
 		for i in xrange(0, n):
 			review_span = soup.find("span", {'id' : "uc-" + str(i)})
 			if review_span is not None:
@@ -38,11 +45,19 @@ class ReviewCrawler:
 				self.reviews.append({'user': review_by, 'rating': review_rating, 'raw-text': review_text})
 
 	def write_reviews(self, reviews, product_name):
+		"""
+			Write the reviews to a JSON file
+			reviews: The reviews to write
+			product_name: Name of the JSON file
+		"""
 		json_file = open("../data/reviews/%s_%s_%s.json" % (self.validate_filename(product_name), str(self.cid), str(len(self.reviews))), "w")
 		json_file.write(json.dumps(self.reviews))
 		json_file.close()
 
 	def run(self):
+		"""
+			Main working method of ReviewCrawler
+		"""
 		start = 0
 		num = self.no_reviews
 		while start < num:

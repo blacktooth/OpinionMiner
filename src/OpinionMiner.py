@@ -1,12 +1,16 @@
 #!/usr/bin/python
+
+"""
+	Main working class of Opinion-Miner. Provides a CLI.
+"""
+
 from ReviewParser import ReviewParser
 from FeatureExtractor import FeatureExtractor
 from subprocess import check_output
 from OpinionSentenceFinder import OpinionSentenceFinder
 from math import ceil
-import sys, pprint
+import sys
 import settings
-
 
 class OpinionMiner:
 	def __init__(self, cid, min_support = 5):
@@ -17,6 +21,9 @@ class OpinionMiner:
 		self.features = []
 
 	def run(self):
+		"""
+			Instantiates and connects objects.
+		"""
 		name = ReviewParser.map_cid_to_name(self.cid)
 		rev = ReviewParser(open(settings.reviews_path + name, 'rb'), name.split('.')[-1])
 		rev.parse()
@@ -60,11 +67,10 @@ class OpinionMiner:
 
 		self.overall_rating = ceil(rating / no_opinions * 5)
 
-		pp = pprint.PrettyPrinter(indent = 4)
 		print "Is this a %s?" % f.product_category
 		print "%d features are interesting" % len(self.features)
 
-		#pp.pprint(opinion_sents)
+		#print(opinion_sents)
 		response = {'ratings': self.ratings}
 		response['product_name'] = f.product_name
 		response['product_category'] = f.product_category.title()

@@ -2,6 +2,7 @@
 
 """
 	Extracts features from the reviews
+	The following steps are involved in extraction
 	Uses NLTK
 """
 
@@ -14,12 +15,27 @@ from nltk.corpus import stopwords, wordnet
 
 class FeatureExtractor:
 	def _remove_stopwords(self, tokens):
+		"""
+			Removes specific stopwords.
+			tokens: List of tokens
+		"""
 		words = stopwords.words('english')
 		#Find a way to eliminate the need for adding custom stopwords
 		words.extend(['pros', 'cons', 'things', 'day', 'points', 'time', 'month', 'year'])
 		return [token.lower() for token in tokens if token.lower() not in words and len(token) > 1]
 
 	def __init__(self, text, product_name):
+		"""
+			text: Raw review text
+			product_name: Name of the product
+			
+			The raw text is processed in the following order:
+				Tokenize the raw text into sentences and eventually to tokens
+				Tags the obtained tokens with their parts of speech
+				Builds a data structure of tagged sentences along with the nouns and noun phrases
+				Lemmatize the nouns / noun phrases 
+				Updates the data structure
+		"""
 		self.candidate_features = []
 		self.feature_sentences = []
 		self.product_name = ReviewParser.get_pretty_name(product_name)
@@ -49,12 +65,21 @@ class FeatureExtractor:
 			self.feature_sentences.append(feature_sent)
 
 	def candidate_feature_list(self):
+		"""
+			Prepares the list of all extracted features
+		"""
 		for fs in self.feature_sentences:
 			self.candidate_features.extend(list(set(fs['nouns'])))
 			self.candidate_features.extend(list(set(fs['noun_phrases'])))
 		return self.candidate_features
 
 	def prune_features(self, features, p_support):
+		"""
+			Removes redundant features and maps single word features to phrases
+			features: Obtained set of basic features
+			p_supprt: p_support value. (Not used)
+			
+		"""
 		
 		#The most frequent feature is the type of product (from many observations)
 		self.product_category = features.pop(0)[0]
@@ -77,11 +102,11 @@ class FeatureExtractor:
 
 		return sorted(list(set(features)), key=lambda x: x[1], reverse=True)
 		
-	"""
-		This method differs from paper
-	"""
 	def get_frequent_features(self, min_support):
-		#get n item sets	
+		"""
+			Apply Frequency Distribution on the list and discard least occuring ones.
+			min_support: The minimum support value which is the threshold for determining frequent features
+		"""
 		dist = FreqDist(self.candidate_feature_list())
 		features = [(item, count) for (item, count) in dist.iteritems() if count >= min_support]
 		return self.prune_features(features, 3)

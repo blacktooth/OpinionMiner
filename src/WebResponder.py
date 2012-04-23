@@ -1,3 +1,7 @@
+"""
+	Respond to GET requests and serve summary of reviews
+"""
+
 import json, web
 from OpinionMiner import *
 from ReviewParser import ReviewParser
